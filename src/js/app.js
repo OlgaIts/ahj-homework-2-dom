@@ -1,33 +1,8 @@
-export default 'app.js';
+import Game from './game';
 
-const holes = Array.from(document.querySelectorAll('.hole'));
-
-function getNextHole() {
-  let current;
-  return () => {
-    const i = Math.floor(Math.random() * holes.length);
-    if (i !== current) {
-      current = i;
-    }
-    if (i === current) {
-      getNextHole();
-    }
-    return holes[i];
-  };
+export default class App {
+  static init() {
+    this.game = new Game();
+    this.game.init();
+  }
 }
-
-const nextHole = getNextHole();
-
-// holes
-function run() {
-  const hole = nextHole();
-  let timer = null;
-  hole.innerHTML = '<div class="goblin show"></div>';
-
-  timer = setInterval(() => {
-    hole.innerHTML = '';
-    clearInterval(timer);
-    run();
-  }, 1100);
-}
-run();

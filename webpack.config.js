@@ -1,33 +1,23 @@
 const path = require('path');
-// Плагин для работы с html файлами
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// Плагин для компиляции CSS в отдельные файлы
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// Плагин для оптимизации изображений
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
-// Плагин для минификации JS
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-// Плагин для минификации CSS
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 
 const basePath = path.resolve(__dirname, 'src');
-// переменные режима разработки для использования в оптимизации конфига
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
 
-// функция для настройки оптимизации для режима dev и prod
 const optimization = () => {
   const config = {
-    // настройка для исключения повторения кода подключаемых библиотек в бандле
     splitChunks: {
       chunks: 'all',
     },
   };
 
   if (isProd) {
-    // настройка оптимизации изображений и минификации кода при сборке
     config.minimizer = [
-      // минификация js файлов + удаление комментариев
       new TerserWebpackPlugin({
         terserOptions: {
           format: {
@@ -36,7 +26,6 @@ const optimization = () => {
         },
         extractComments: false,
       }),
-      // минификация css файлов + удаление комментариев
       new CssMinimizerWebpackPlugin({
         minimizerOptions: {
           preset: [
@@ -88,18 +77,14 @@ const optimization = () => {
 };
 
 module.exports = {
+  devtool: 'source-map',
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  // в какой среде будет работать итоговое приложение (web - в браузере)
   target: 'web',
   devServer: {
-    // после запуска сервера автоматически открыть браузер
     open: true,
-    // включает автоматическую перезагрузку страницы при изменениях в файлах
     hot: true,
   },
-  // точка входа (файл, который webpack будет компилировать)
   entry: path.resolve(basePath, 'index.js'),
-  // точка выхода (куда webpack должен складывать результаты работы)
   output: {
     path: path.resolve(__dirname, 'dist'),
     clean: true,
@@ -113,9 +98,7 @@ module.exports = {
       filename: '[name].[contenthash:10].css',
     }),
   ],
-  // оптимизация и минификация файлов
   optimization: optimization(),
-  // правила обработки файлов
   module: {
     rules: [
       {
@@ -142,7 +125,7 @@ module.exports = {
         exclude: /node_modules/,
         type: 'asset/resource', //
         generator: {
-          filename: path.join('img', '[name].[contenthash:10][ext]'),
+          filename: path.join('assets', '[name].[contenthash:10][ext]'),
         },
       },
       {
